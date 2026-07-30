@@ -94,6 +94,13 @@ size_t nand_next_programmable_page(const NandFlash *flash, size_t blockIdx);
 /* Prints a compact status table (block, erase count, page states) to stdout. */
 void nand_print_status(const NandFlash *flash);
 
+/* Total capacity of the device in bytes (numBlocks * pagesPerBlock * pageSizeBytes). */
+size_t nand_total_capacity_bytes(const NandFlash *flash);
+
+/* Bytes currently "used" -- i.e. sum of pageSizeBytes over every page that
+ * is in PAGE_PROGRAMMED state, across all blocks. */
+size_t nand_used_bytes(const NandFlash *flash);
+
 /* Short, fixed human-readable string for a status code. */
 const char *nand_status_str(NandStatus status);
 
