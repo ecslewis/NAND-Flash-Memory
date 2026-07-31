@@ -104,7 +104,7 @@ static void print_help(void)
         "  program <block> <page> <text>  Program a page with text\n"
         "  read <block> <page>            Read and print a page's contents\n"
         "  status                         Show block/page status table\n"
-        "  size                           Displays total storage used\n"
+        "  size                           Show storage used vs. total capacity\n"
         "  help                           Show this help\n"
         "  quit                           Exit\n");
 }
@@ -132,13 +132,6 @@ static void run_interactive(NandFlash *flash)
         {
             break;
         }
-        else if (strcmp(cmd, "size") == 0)
-        {
-            size_t used = nand_used_bytes(flash);
-            size_t total = nand_total_capacity_bytes(flash);
-            double pct = total ? (100.0 * (double)used / (double)total) : 0.0;
-            printf("Storage used: %zu / %zu bytes (%.1f%%)\n", used, total, pct);
-        }
         else if (strcmp(cmd, "help") == 0)
         {
             print_help();
@@ -146,6 +139,13 @@ static void run_interactive(NandFlash *flash)
         else if (strcmp(cmd, "status") == 0)
         {
             nand_print_status(flash);
+        }
+        else if (strcmp(cmd, "size") == 0)
+        {
+            size_t used = nand_used_bytes(flash);
+            size_t total = nand_total_capacity_bytes(flash);
+            double pct = total ? (100.0 * (double)used / (double)total) : 0.0;
+            printf("Storage used: %zu / %zu bytes (%.1f%%)\n", used, total, pct);
         }
         else if (strcmp(cmd, "erase") == 0)
         {

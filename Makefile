@@ -1,29 +1,40 @@
 CC      := gcc
 CFLAGS  := -std=c11 -Wall -Wextra -O2
-TARGET  := nand_sim
-SRCS    := main.c nand_flash.c
-OBJS    := $(SRCS:.c=.o)
 
-.PHONY: all clean run debug asan
+NAND_TARGET := nand_sim
+NAND_SRCS   := main.c nand_flash.c
+NAND_OBJS   := $(NAND_SRCS:.c=.o)
 
-all: $(TARGET)
+FTL_TARGET := ftl_sim
+FTL_SRCS   := ftl_main.c nand_flash.c ftl.c
+FTL_OBJS   := $(FTL_SRCS:.c=.o)
 
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $(OBJS)
+.PHONY: all clean run run-ftl debug asan
 
-%.o: %.c nand_flash.h
+all: $(NAND_TARGET) $(FTL_TARGET)
+
+$(NAND_TARGET): $(NAND_OBJS)
+	$(CC) $(CFLAGS) -o $@ $(NAND_OBJS)
+
+$(FTL_TARGET): $(FTL_OBJS)
+	$(CC) $(CFLAGS) -o $@ $(FTL_OBJS)
+
+%.o: %.c nand_flash.h ftl.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-run: $(TARGET)
-	./$(TARGET)
+run: $(NAND_TARGET)
+	./$(NAND_TARGET)
+
+run-ftl: $(FTL_TARGET)
+	./$(FTL_TARGET)
 
 # Debug build with symbols, no optimization
 debug: CFLAGS := -std=c11 -Wall -Wextra -g -O0
-debug: clean $(TARGET)
+debug: clean all
 
 # Build with AddressSanitizer/UBSan for memory/UB checking
 asan: CFLAGS := -std=c11 -Wall -Wextra -g -O0 -fsanitize=address,undefined
-asan: clean $(TARGET)
+asan: clean all
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(NAND_OBJS) $(FTL_OBJS) $(NAND_TARGET) $(FTL_TARGET)
