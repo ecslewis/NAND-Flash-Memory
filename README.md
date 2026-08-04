@@ -1,8 +1,7 @@
 # NAND Flash Simulator (C)
 
 A small, dependency-free C11 simulation of NAND flash memory behavior at the
-block/page level — built for fun, to explore the quirky rules that make NAND
-different from RAM or a regular file.
+block/page level
 
 ## Table of contents
 
